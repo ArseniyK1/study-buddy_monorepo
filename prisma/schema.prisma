@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["typedSql"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model auth_user {
+  id          Int     @id @default(autoincrement())
+  email       String  @unique
+  first_name  String?
+  second_name String?
+  middle_name String?
+  password    String
+
+  role    role? @relation(fields: [role_id], references: [id])
+  role_id Int?
+
+  // Составной уникальный индекс на email + role_id
+  @@unique([role_id, email], name: "auth_user_email_role_id_unique")
+}
+
+model role {
+  id Int @id @default(autoincrement())
+
+  value       String
+  description String
+
+  users auth_user[]
+}
