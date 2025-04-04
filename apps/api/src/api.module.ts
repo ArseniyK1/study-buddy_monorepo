@@ -9,8 +9,8 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       envFilePath: [
         process.env.NODE_ENV === 'development'
-          ? '.env.development'
-          : '.env.production',
+          ? '../../.env.development'
+          : '../../.env.production',
       ],
     }),
   ],
