@@ -11,6 +11,7 @@ async function bootstrap() {
   // await app.startAllMicroservices();
 
   const config = new ConfigService();
+  console.log(config.get('PORT'));
   const port = config.get('PORT') ?? 3000;
 
   app.useGlobalPipes(new ValidationPipe());
