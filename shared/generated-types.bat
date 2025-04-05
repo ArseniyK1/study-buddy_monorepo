@@ -24,8 +24,8 @@ protoc ^
   --plugin=protoc-gen-ts_proto="%PLUGIN_PATH%" ^
   --ts_proto_out="%OUTPUT_DIR%" ^
   --ts_proto_opt=outputServices=grpc-js,nestJs=true,addGrpcMetadata=true,addNestjsRestParameter=true,returnObservable=false ^
-  -I="%ROOT_DIR%proto/proto" ^
-  "%ROOT_DIR%proto/proto/auth.proto"
+  -I="./proto" ^
+  "./proto/auth.proto"
 
 echo Types generated successfully in: %OUTPUT_DIR%
 ENDLOCAL

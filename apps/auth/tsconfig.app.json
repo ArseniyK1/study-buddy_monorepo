@@ -4,6 +4,6 @@
     "declaration": false,
     "outDir": "../../dist/apps/auth"
   },
-  "include": ["**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
