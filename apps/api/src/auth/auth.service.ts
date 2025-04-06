@@ -15,7 +15,7 @@ import { RpcException } from '@nestjs/microservices';
 import { Status } from '@grpc/grpc-js/build/src/constants';
 interface AuthServiceClient {
   FindAllUsers(request: object): Observable<{ users: any[] }>;
-  SignIn(dto: SignInDto): Observable<any>;
+  SignIn(dto: SignInDto): Observable<AuthResponse>;
 }
 
 @Injectable()
@@ -27,7 +27,7 @@ export class AuthService implements OnModuleInit {
     this.authService = this.client.getService<AuthServiceClient>('AuthService');
   }
 
-  async signIn(dto: SignInDto): Promise<AuthResponse> {
+  async signIn(dto: SignInDto) {
     try {
       return await lastValueFrom(
         this.authService.SignIn(dto).pipe(
@@ -41,11 +41,7 @@ export class AuthService implements OnModuleInit {
             if (grpcError.code === Status.UNAUTHENTICATED) {
               throw new UnauthorizedException(grpcError.details);
             }
-            console.log(
-              '123123123123123123123123123123',
-              grpcError.code,
-              Status.UNAUTHENTICATED,
-            );
+            console.log('Api Controller', grpcError?.code);
 
             throw new InternalServerErrorException('test');
           }),
@@ -53,7 +49,7 @@ export class AuthService implements OnModuleInit {
       );
     } catch (error) {
       // Логируем ошибку для отладки
-      console.error('API Gateway AuthService error:', error);
+      console.error('// Логируем ошибку для отладки', error);
       throw error;
     }
   }

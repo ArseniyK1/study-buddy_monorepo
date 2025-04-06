@@ -11,25 +11,12 @@ async function bootstrap() {
   // await app.startAllMicroservices();
 
   const config = new ConfigService();
-  console.log(config.get('PORT'));
   const port = config.get('PORT') ?? 3000;
 
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
 
   const configSwagger = new DocumentBuilder()
-    // .addBearerAuth(
-    //   {
-    //     type: 'http',
-    //     scheme: 'bearer',
-    //     bearerFormat: 'JWT',
-    //     name: 'JWT',
-    //     description: 'Enter JWT token',
-    //     in: 'header',
-    //   },
-    //   'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
-    // )
-    // .addSecurityRequirements('JWT-auth')
     .setTitle('Диплом Дмитрий Соболев')
     .setDescription('Документаци по API GATEWAY')
     .setVersion('0.0.1')

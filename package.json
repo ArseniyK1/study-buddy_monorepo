@@ -9,7 +9,7 @@
     "build": " concurrently \"nest build api\" \"nest build auth\" \"nest build grpc\"",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "concurrently --prefix-colors \"bgBlue.bold,bgGreen.bold,bgMagenta.bold\" --prefix \"[{name}]\" --names \"API,AUTH,GRPC\" \"cross-env NODE_ENV=development nest start api --watch\" \"dotenv -e .env.development -- nest start auth --watch\" \"nest start grpc --watch\"",
+    "start:dev": "concurrently --prefix-colors \"bgBlue.bold,bgGreen.bold,bgMagenta.bold\" --prefix \"[{name}]\" --names \"API,AUTH,GRPC\" \"cross-env NODE_ENV=development nest start api --watch\" \"nest start auth --watch\" \"nest start grpc --watch\"",
     "start:debug": "nest start --debug --watch",
     "prisma:push": "dotenv -e .env.development -- npx prisma db push",
     "prisma:migrate": "dotenv -e .env.development -- npx prisma migrate dev --name init",

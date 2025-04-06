@@ -26,7 +26,7 @@ export class AuthService {
     });
 
     if (!user?.id) {
-      console.log('ASDdasdasdasdasdada');
+      console.log('Auth Controller', Status.NOT_FOUND);
       throw new RpcException({
         code: Status.NOT_FOUND,
         message: 'Такого пользователя не существует!',
@@ -36,11 +36,17 @@ export class AuthService {
       dto.password.toString(),
       user.password.toString(),
     );
-    if (!areEqual)
+    if (!areEqual) {
+      console.log(
+        '!areEqual !areEqual !areEqual !areEqual',
+        Status.FAILED_PRECONDITION,
+      );
+
       throw new RpcException({
-        code: Status.FAILED_PRECONDITION,
+        code: Status.NOT_FOUND,
         message: 'Такого пользователя не существует!',
       });
+    }
     const role = await this.prisma.role.findUnique({
       where: { id: +user.role_id },
     });
