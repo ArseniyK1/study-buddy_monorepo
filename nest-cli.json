@@ -37,15 +37,6 @@
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
     },
-    "grpc": {
-      "type": "application",
-      "root": "apps/grpc",
-      "entryFile": "main",
-      "sourceRoot": "apps/grpc/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/grpc/tsconfig.app.json"
-      }
-    },
     "redis": {
       "type": "application",
       "root": "apps/redis",

@@ -39,8 +39,8 @@ export class AuthService {
     );
     if (!areEqual) {
       throw new RpcException({
-        code: Status.NOT_FOUND,
-        message: 'Такого пользователя не существует!',
+        code: Status.UNAUTHENTICATED,
+        message: 'Неправильный пароль!',
       });
     }
     const role = await this.prisma.role.findUnique({
