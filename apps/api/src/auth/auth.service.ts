@@ -1,23 +1,16 @@
-// import { AuthResponse } from '../../../grpc/src/generated-types/auth';
+import { FindAllUsersRequest } from './../../../../shared/generated/auth';
 import { SignInDto } from './dto/sing-in.dto';
-import {
-  BadRequestException,
-  HttpException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  OnModuleInit,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { catchError, firstValueFrom, lastValueFrom, Observable } from 'rxjs';
-import { AuthResponse } from 'shared/generated/auth';
-import { RpcException } from '@nestjs/microservices';
-import { Status } from '@grpc/grpc-js/build/src/constants';
+import { Observable } from 'rxjs';
+import { AuthResponse, UserListResponse } from 'shared/generated/auth';
+import { SignUpDto } from './dto/sing-up.dto';
+import { handleRequest } from '../grpc/grpc.handle';
+
 interface AuthServiceClient {
-  FindAllUsers(request: object): Observable<{ users: any[] }>;
+  FindAllUsers(dto: FindAllUsersRequest): Observable<UserListResponse>;
   SignIn(dto: SignInDto): Observable<AuthResponse>;
+  SignUp(dto: SignUpDto): Observable<AuthResponse>;
 }
 
 @Injectable()
@@ -30,21 +23,14 @@ export class AuthService implements OnModuleInit {
   }
 
   async signIn(dto: SignInDto): Promise<AuthResponse> {
-    try {
-      return await firstValueFrom(
-        this.authService.SignIn(dto).pipe(
-          catchError((error) => {
-            console.log('AuthService error:', error);
-            throw new RpcException({
-              code: error.code || Status.INTERNAL,
-              message: error.message || 'Internal server error',
-            });
-          }),
-        ),
-      );
-    } catch (error) {
-      console.log('AuthService catch error:', error);
-      throw error;
-    }
+    return await handleRequest(() => this.authService.SignIn(dto));
+  }
+
+  async signUp(dto: SignUpDto): Promise<AuthResponse> {
+    return handleRequest(() => this.authService.SignUp(dto));
+  }
+
+  async findAllUsers(dto: FindAllUsersRequest): Promise<UserListResponse> {
+    return await handleRequest(() => this.authService.FindAllUsers(dto));
   }
 }

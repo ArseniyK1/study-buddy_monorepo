@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { SignInRequest } from 'shared/generated/auth';
 
-export class SignInDto {
+export class SignInDto implements SignInRequest {
   @IsString({ message: 'Поле email должно быть типа STRING' })
   @IsEmail()
   @IsNotEmpty({ message: 'Поле email не должно быть пустым' })

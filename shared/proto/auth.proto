@@ -2,13 +2,13 @@ syntax = "proto3";
 
 package auth;
 
+// Сервис аутентификации и управления пользователями
 service AuthService {
   rpc SignIn (SignInRequest) returns (AuthResponse) {}
   rpc SignUp (SignUpRequest) returns (AuthResponse) {}
   rpc FindAllUsers (FindAllUsersRequest) returns (UserListResponse) {}
 }
 
-// --- Запросы ---
 message SignInRequest {
   string email = 1;
   string password = 2;
@@ -17,17 +17,16 @@ message SignInRequest {
 message SignUpRequest {
   string email = 1;
   string password = 2;
-  Name name = 3;
-  uint32 role_id = 4;
-
-  message Name {
-    string first_name = 1;
-    string last_name = 2;
-    optional string middle_name = 3;
-  }
+  UserName name = 3;
+  optional uint32 role_id = 4;
 }
 
-// --- Ответы ---
+message UserName {
+  string first_name = 1;
+  string last_name = 2;
+  optional string middle_name = 3;
+}
+
 message AuthResponse {
   string access_token = 1;
 }
@@ -44,12 +43,12 @@ message User {
   uint32 role_id = 5;
 }
 
-message ErrorResponse {
-  string error = 1;
-  uint32 status = 2;
+message Error { 
+  string message = 1;
+  uint32 code = 2;     
   optional string stack_trace = 3;
 }
 
 message FindAllUsersRequest {
-  string name = 1;
+  optional string name_filter = 1;
 }

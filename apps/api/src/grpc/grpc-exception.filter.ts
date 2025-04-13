@@ -16,18 +16,15 @@ interface GrpcError {
 @Catch(RpcException)
 export class GrpcExceptionFilter {
   catch(exception: RpcException, host: ArgumentsHost) {
-    console.log('GrpcExceptionFilter - Raw exception:', exception);
-
     const error = exception.getError() as GrpcError;
-    console.log('GrpcExceptionFilter - Parsed error:', error);
-
     const status = this.mapToHttpStatus(error);
-    console.log('GrpcExceptionFilter - Mapped status:', status);
+    // очистка сообщения от префикса статуса
+    const cleanMessage = error.message.replace(/^\d+\s+\w+:\s*/, '');
 
     const response = host.switchToHttp().getResponse();
     response.status(status).json({
       statusCode: status,
-      message: error.message || 'Internal server error',
+      message: cleanMessage || 'Internal server error',
       error: HttpStatus[status],
     });
   }

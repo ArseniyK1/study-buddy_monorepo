@@ -12,7 +12,6 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "auth";
 
-/** --- Запросы --- */
 export interface SignInRequest {
   email: string;
   password: string;
@@ -21,17 +20,16 @@ export interface SignInRequest {
 export interface SignUpRequest {
   email: string;
   password: string;
-  name: SignUpRequest_Name | undefined;
-  roleId: number;
+  name: UserName | undefined;
+  roleId?: number | undefined;
 }
 
-export interface SignUpRequest_Name {
+export interface UserName {
   firstName: string;
   lastName: string;
   middleName?: string | undefined;
 }
 
-/** --- Ответы --- */
 export interface AuthResponse {
   accessToken: string;
 }
@@ -48,14 +46,14 @@ export interface User {
   roleId: number;
 }
 
-export interface ErrorResponse {
-  error: string;
-  status: number;
+export interface Error {
+  message: string;
+  code: number;
   stackTrace?: string | undefined;
 }
 
 export interface FindAllUsersRequest {
-  name: string;
+  nameFilter?: string | undefined;
 }
 
 export const AUTH_PACKAGE_NAME = "auth";
@@ -109,7 +107,7 @@ export const SignInRequest: MessageFns<SignInRequest> = {
 };
 
 function createBaseSignUpRequest(): SignUpRequest {
-  return { email: "", password: "", name: undefined, roleId: 0 };
+  return { email: "", password: "", name: undefined };
 }
 
 export const SignUpRequest: MessageFns<SignUpRequest> = {
@@ -121,9 +119,9 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
       writer.uint32(18).string(message.password);
     }
     if (message.name !== undefined) {
-      SignUpRequest_Name.encode(message.name, writer.uint32(26).fork()).join();
+      UserName.encode(message.name, writer.uint32(26).fork()).join();
     }
-    if (message.roleId !== 0) {
+    if (message.roleId !== undefined) {
       writer.uint32(32).uint32(message.roleId);
     }
     return writer;
@@ -157,7 +155,7 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
             break;
           }
 
-          message.name = SignUpRequest_Name.decode(reader, reader.uint32());
+          message.name = UserName.decode(reader, reader.uint32());
           continue;
         }
         case 4: {
@@ -178,12 +176,12 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
   },
 };
 
-function createBaseSignUpRequest_Name(): SignUpRequest_Name {
+function createBaseUserName(): UserName {
   return { firstName: "", lastName: "" };
 }
 
-export const SignUpRequest_Name: MessageFns<SignUpRequest_Name> = {
-  encode(message: SignUpRequest_Name, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const UserName: MessageFns<UserName> = {
+  encode(message: UserName, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.firstName !== "") {
       writer.uint32(10).string(message.firstName);
     }
@@ -196,10 +194,10 @@ export const SignUpRequest_Name: MessageFns<SignUpRequest_Name> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): SignUpRequest_Name {
+  decode(input: BinaryReader | Uint8Array, length?: number): UserName {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSignUpRequest_Name();
+    const message = createBaseUserName();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -392,17 +390,17 @@ export const User: MessageFns<User> = {
   },
 };
 
-function createBaseErrorResponse(): ErrorResponse {
-  return { error: "", status: 0 };
+function createBaseError(): Error {
+  return { message: "", code: 0 };
 }
 
-export const ErrorResponse: MessageFns<ErrorResponse> = {
-  encode(message: ErrorResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.error !== "") {
-      writer.uint32(10).string(message.error);
+export const Error: MessageFns<Error> = {
+  encode(message: Error, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.message !== "") {
+      writer.uint32(10).string(message.message);
     }
-    if (message.status !== 0) {
-      writer.uint32(16).uint32(message.status);
+    if (message.code !== 0) {
+      writer.uint32(16).uint32(message.code);
     }
     if (message.stackTrace !== undefined) {
       writer.uint32(26).string(message.stackTrace);
@@ -410,10 +408,10 @@ export const ErrorResponse: MessageFns<ErrorResponse> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): ErrorResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): Error {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseErrorResponse();
+    const message = createBaseError();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -422,7 +420,7 @@ export const ErrorResponse: MessageFns<ErrorResponse> = {
             break;
           }
 
-          message.error = reader.string();
+          message.message = reader.string();
           continue;
         }
         case 2: {
@@ -430,7 +428,7 @@ export const ErrorResponse: MessageFns<ErrorResponse> = {
             break;
           }
 
-          message.status = reader.uint32();
+          message.code = reader.uint32();
           continue;
         }
         case 3: {
@@ -452,13 +450,13 @@ export const ErrorResponse: MessageFns<ErrorResponse> = {
 };
 
 function createBaseFindAllUsersRequest(): FindAllUsersRequest {
-  return { name: "" };
+  return {};
 }
 
 export const FindAllUsersRequest: MessageFns<FindAllUsersRequest> = {
   encode(message: FindAllUsersRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
+    if (message.nameFilter !== undefined) {
+      writer.uint32(10).string(message.nameFilter);
     }
     return writer;
   },
@@ -475,7 +473,7 @@ export const FindAllUsersRequest: MessageFns<FindAllUsersRequest> = {
             break;
           }
 
-          message.name = reader.string();
+          message.nameFilter = reader.string();
           continue;
         }
       }
@@ -488,6 +486,8 @@ export const FindAllUsersRequest: MessageFns<FindAllUsersRequest> = {
   },
 };
 
+/** Сервис аутентификации и управления пользователями */
+
 export interface AuthServiceClient {
   signIn(request: SignInRequest, metadata: Metadata, ...rest: any): Observable<AuthResponse>;
 
@@ -495,6 +495,8 @@ export interface AuthServiceClient {
 
   findAllUsers(request: FindAllUsersRequest, metadata: Metadata, ...rest: any): Observable<UserListResponse>;
 }
+
+/** Сервис аутентификации и управления пользователями */
 
 export interface AuthServiceController {
   signIn(
@@ -533,6 +535,7 @@ export function AuthServiceControllerMethods() {
 
 export const AUTH_SERVICE_NAME = "AuthService";
 
+/** Сервис аутентификации и управления пользователями */
 export type AuthServiceService = typeof AuthServiceService;
 export const AuthServiceService = {
   signIn: {

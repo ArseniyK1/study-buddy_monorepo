@@ -3,7 +3,7 @@ import { ApiModule } from './api.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { GrpcExceptionFilter } from './grpc-exception.filter';
+import { GrpcExceptionFilter } from './grpc/grpc-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiModule);
