@@ -3,6 +3,7 @@ import { ApiModule } from './api.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { GrpcExceptionFilter } from './grpc-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiModule);
@@ -14,6 +15,7 @@ async function bootstrap() {
   const port = config.get<number>('PORT') ?? 3000;
 
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new GrpcExceptionFilter());
   app.enableCors();
   app.setGlobalPrefix('api');
 

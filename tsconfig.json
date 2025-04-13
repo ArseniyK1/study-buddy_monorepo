@@ -17,15 +17,8 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@app/api/*": [
-        "apps/api/src/*"
-      ],
-      "@app/auth/*": [
-        "apps/auth/src/*"
-      ],
-      "@app/grpc/*": [
-        "apps/grpc/src/*"
-      ]
+      "@app/api/*": ["apps/api/src/*"],
+      "@app/auth/*": ["apps/auth/src/*"]
     }
   }
 }

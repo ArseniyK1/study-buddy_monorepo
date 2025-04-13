@@ -31,45 +31,19 @@ export class AuthService implements OnModuleInit {
 
   async signIn(dto: SignInDto): Promise<AuthResponse> {
     try {
-      // return await lastValueFrom(
-      //   this.authService.SignIn(dto).pipe(
-      //     catchError((error) => {
-      //       // Преобразуем gRPC ошибку в HTTP-ответ
-      //       const grpcError = error as { code: number; details: string };
-
-      //       if (grpcError.code === Status.NOT_FOUND) {
-      //         throw new NotFoundException(grpcError.details);
-      //       }
-      //       if (grpcError.code === Status.UNAUTHENTICATED) {
-      //         throw new UnauthorizedException(grpcError.details);
-      //       }
-      //       console.log('Api Controller', error?.code, error?.details);
-
-      //       throw new InternalServerErrorException(error);
-      //     }),
-      //   ),
-      // );
-      //
-      return await firstValueFrom(this.authService.SignIn(dto));
+      return await firstValueFrom(
+        this.authService.SignIn(dto).pipe(
+          catchError((error) => {
+            console.log('AuthService error:', error);
+            throw new RpcException({
+              code: error.code || Status.INTERNAL,
+              message: error.message || 'Internal server error',
+            });
+          }),
+        ),
+      );
     } catch (error) {
-      // Логируем полную ошибку для отладки
-      console.error('Api controller:', JSON.stringify(error));
-
-      // Проверяем, является ли ошибка gRPC ошибкой
-      if (error.code && error.details) {
-        switch (error.code) {
-          case Status.NOT_FOUND: // 5
-            throw new NotFoundException(error.details);
-          case Status.UNAUTHENTICATED: // 16
-            throw new UnauthorizedException(error.details);
-          case Status.INVALID_ARGUMENT: // 3
-            throw new BadRequestException(error.details);
-          default:
-            throw new InternalServerErrorException(error.details);
-        }
-      }
-
-      // Если это не gRPC ошибка, пробрасываем как есть
+      console.log('AuthService catch error:', error);
       throw error;
     }
   }
