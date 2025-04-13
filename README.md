@@ -75,7 +75,6 @@ npm run start:prod
 ├── apps/  
 │   ├── api/          # Основной API-сервис  
 │   ├── auth/         # Сервис аутентификации  
-│   └── grpc/         # gRPC-шлюз  
 ├── libs/             # Общие модули  
 ├── prisma/          # Схема БД и миграции  
 └── client/          # Vue/Nuxt фронтенд  
