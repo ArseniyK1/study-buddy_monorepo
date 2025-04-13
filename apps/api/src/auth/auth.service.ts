@@ -6,6 +6,9 @@ import { Observable } from 'rxjs';
 import { AuthResponse, UserListResponse } from 'shared/generated/auth';
 import { SignUpDto } from './dto/sing-up.dto';
 import { handleRequest } from '../grpc/grpc.handle';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { CacheResponse } from '../decorators/cache.decorator';
 
 interface AuthServiceClient {
   FindAllUsers(dto: FindAllUsersRequest): Observable<UserListResponse>;
@@ -15,7 +18,10 @@ interface AuthServiceClient {
 
 @Injectable()
 export class AuthService implements OnModuleInit {
-  constructor(@Inject('GRPC_SERVICE') private client: ClientGrpc) {}
+  constructor(
+    @Inject('GRPC_SERVICE') private client: ClientGrpc,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
   private authService: AuthServiceClient;
 
   onModuleInit() {
@@ -30,6 +36,7 @@ export class AuthService implements OnModuleInit {
     return handleRequest(() => this.authService.SignUp(dto));
   }
 
+  @CacheResponse(600)
   async findAllUsers(dto: FindAllUsersRequest): Promise<UserListResponse> {
     return await handleRequest(() => this.authService.FindAllUsers(dto));
   }

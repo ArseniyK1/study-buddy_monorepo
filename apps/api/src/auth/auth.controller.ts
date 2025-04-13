@@ -8,16 +8,10 @@ import {
 } from 'shared/generated/auth';
 import { Public } from './guard/public.decorator';
 import { SignUpDto } from './dto/sing-up.dto';
-import { CacheResponse } from '../decorators/cache.decorator';
-import { Cache } from 'cache-manager';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('/signIn')
@@ -31,7 +25,6 @@ export class AuthController {
     return this.authService.signUp(dto);
   }
 
-  @CacheResponse(600)
   @Post('/all-users')
   findAllUsers(@Body() dto: FindAllUsersRequest): Promise<UserListResponse> {
     return this.authService.findAllUsers(dto);
