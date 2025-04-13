@@ -8,7 +8,16 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   providers: [AuthService],
   imports: [
     ClientsModule.register([
-      { name: 'AUTH_SERVICE', transport: Transport.TCP },
+      {
+        name: 'AUTH_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: process.env.AUTH_SERVICE_HOST,
+          port: !!process.env.AUTH_SERVICE_PORT
+            ? +process.env.AUTH_SERVICE_PORT
+            : 3000,
+        },
+      },
     ]),
   ],
 })

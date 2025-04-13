@@ -6,10 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": " concurrently \"nest build api\" \"nest build auth\" \"nest build grpc\"",
+    "build": " concurrently \"nest build api\" \"nest build auth\" \"nest build grpc\" \"nest build redis\"",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "concurrently --prefix-colors \"bgBlue.bold,bgGreen.bold,bgMagenta.bold\" --prefix \"[{name}]\" --names \"API,AUTH,GRPC\" \"cross-env NODE_ENV=development nest start api --watch\" \"nest start auth --watch\" \"nest start grpc --watch\"",
+    "start:dev": "concurrently --prefix-colors \"bgBlue.bold,bgGreen.bold,bgMagenta.bold,bgRed.bold\" --prefix \"[{name}]\" --names \"API,AUTH,GRPC,REDIS\" \"cross-env NODE_ENV=development nest start api --watch\" \"nest start auth --watch\" \"nest start grpc --watch\" \"nest start redis --watch\"",
     "start:debug": "nest start --debug --watch",
     "prisma:push": "dotenv -e .env.development -- npx prisma db push",
     "prisma:migrate": "dotenv -e .env.development -- npx prisma migrate dev --name init",
@@ -42,6 +42,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.7",
+    "ioredis": "^5.6.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },

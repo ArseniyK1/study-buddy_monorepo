@@ -1,6 +1,7 @@
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
   Controller,
+  HttpException,
   Inject,
   NotFoundException,
   UnauthorizedException,
@@ -30,8 +31,17 @@ export class AuthController {
 
       return res;
     } catch (e) {
-      console.log('GRPC controller', { code: e.code, message: e.message });
-      throw new RpcException({ code: e.code, message: e.details });
+      console.log('GRPC controller error:', e.code || Status.INTERNAL);
+
+      // Otherwise, wrap it in an RpcException
+      // throw new RpcException({
+      //   code: e.code || Status.INTERNAL,
+      //   message: e.details || e.message || 'Internal server error',
+      // });
+      throw new HttpException(
+        e.message || 'Internal server error',
+        e.code || Status.INTERNAL,
+      );
     }
   }
 }

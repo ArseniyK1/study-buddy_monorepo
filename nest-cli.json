@@ -45,6 +45,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/grpc/tsconfig.app.json"
       }
+    },
+    "redis": {
+      "type": "application",
+      "root": "apps/redis",
+      "entryFile": "main",
+      "sourceRoot": "apps/redis/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/redis/tsconfig.app.json"
+      }
     }
   }
 }

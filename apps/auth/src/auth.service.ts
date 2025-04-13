@@ -31,17 +31,13 @@ export class AuthService {
         code: Status.NOT_FOUND,
         message: 'Такого пользователя не существует!',
       });
+      // throw new NotFoundException('Такого пользователя не существует!');
     }
     const areEqual = await compare(
       dto.password.toString(),
       user.password.toString(),
     );
     if (!areEqual) {
-      console.log(
-        '!areEqual !areEqual !areEqual !areEqual',
-        Status.FAILED_PRECONDITION,
-      );
-
       throw new RpcException({
         code: Status.NOT_FOUND,
         message: 'Такого пользователя не существует!',
