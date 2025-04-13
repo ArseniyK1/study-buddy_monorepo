@@ -13,19 +13,23 @@ if not exist "%PLUGIN_PATH%" (
     exit /b 1
 )
 
-:: Выходная директория относительно расположения скрипта
+:: Выходная директория
 set "OUTPUT_DIR=%SCRIPT_DIR%generated"
-
-:: Создаем директорию, если её нет
 mkdir "%OUTPUT_DIR%" 2>nul
 
-:: Генерация типов
-protoc ^
-  --plugin=protoc-gen-ts_proto="%PLUGIN_PATH%" ^
-  --ts_proto_out="%OUTPUT_DIR%" ^
-  --ts_proto_opt=outputServices=grpc-js,nestJs=true,addGrpcMetadata=true,addNestjsRestParameter=true,returnObservable=false ^
-  -I="./proto" ^
-  "./proto/auth.proto"
+:: Директория с proto-файлами
+set "PROTO_DIR=%SCRIPT_DIR%proto"
 
-echo Types generated successfully in: %OUTPUT_DIR%
+:: Перебираем все .proto файлы в папке proto
+for %%F in ("%PROTO_DIR%\*.proto") do (
+    echo Generating types for: %%~nxF
+    protoc ^
+      --plugin=protoc-gen-ts_proto="%PLUGIN_PATH%" ^
+      --ts_proto_out="%OUTPUT_DIR%" ^
+      --ts_proto_opt=outputServices=grpc-js,nestJs=true,addGrpcMetadata=true,addNestjsRestParameter=true,returnObservable=false ^
+      -I="%PROTO_DIR%" ^
+      "%%F"
+)
+
+echo All types generated successfully in: %OUTPUT_DIR%
 ENDLOCAL

@@ -1,9 +1,12 @@
-import { FindAllUsersRequest } from './../../../../shared/generated/auth';
 import { SignInDto } from './dto/sing-in.dto';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { AuthResponse, UserListResponse } from 'shared/generated/auth';
+import {
+  AuthResponse,
+  UserListResponse,
+  FindAllUsersRequest,
+} from 'shared/generated/auth';
 import { SignUpDto } from './dto/sing-up.dto';
 import { handleRequest } from '../grpc/grpc.handle';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
