@@ -11,7 +11,6 @@ import {
   User,
   UserListResponse,
 } from 'shared/generated/auth';
-import { UInt32Value } from 'shared/generated/google/protobuf/wrappers';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -29,25 +28,12 @@ export class AuthController implements AuthServiceController {
   }
 
   @GrpcMethod('AuthService', 'FindAllUsers')
-  async findAllUsers(data: FindAllUsersRequest): Promise<UserListResponse> {
+  async findAllUsers(data: FindAllUsersRequest): Promise<any> {
     return await this.authService.findAllUsers(data);
   }
 
   @GrpcMethod('AuthService', 'GetProfile')
-  async getProfile(id: UInt32Value): Promise<User> {
-    console.log('Auth Micro', id.value);
-
-    const user = await this.authService.getProfile(id.value);
-    if (!user) {
-      throw new RpcException('User not found');
-    }
-    return {
-      id: user.id,
-      firstName: user.first_name || '',
-      lastName: user.second_name || '',
-      middleName: user.middle_name || undefined,
-      email: user.email,
-      roleId: user.role_id,
-    };
+  async getProfile(id: number): Promise<User> {
+    return await this.authService.getProfile(id);
   }
 }

@@ -9,18 +9,18 @@ import {
 import { Type } from 'class-transformer';
 import { SignUpRequest, User } from 'shared/generated/auth';
 
-class UserNameDto implements Omit<User, 'id' | 'roleId' | 'email'> {
+class UserNameDto implements Omit<User, 'id' | 'role_id' | 'email'> {
   @IsString({ message: 'Поле firstName должно быть типа STRING' })
   @IsNotEmpty({ message: 'Поле firstName не должно быть пустым' })
-  firstName: string;
+  first_name: string;
 
   @IsString({ message: 'Поле lastName должно быть типа STRING' })
   @IsNotEmpty({ message: 'Поле lastName не должно быть пустым' })
-  lastName: string;
+  last_name: string;
 
   @IsString({ message: 'Поле middleName должно быть типа STRING' })
   @IsOptional()
-  middleName?: string | undefined;
+  middle_name?: string | undefined;
 }
 
 export class SignUpDto implements SignUpRequest {
@@ -40,5 +40,5 @@ export class SignUpDto implements SignUpRequest {
 
   @IsNumber({}, { message: 'Поле roleId должно быть типа NUMBER' })
   @IsOptional()
-  roleId?: number;
+  role_id?: number;
 }
