@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
 package auth;
 
 // Сервис аутентификации и управления пользователями
@@ -7,6 +10,7 @@ service AuthService {
   rpc SignIn (SignInRequest) returns (AuthResponse) {}
   rpc SignUp (SignUpRequest) returns (AuthResponse) {}
   rpc FindAllUsers (FindAllUsersRequest) returns (UserListResponse) {}
+  rpc GetProfile (google.protobuf.UInt32Value) returns (User) {}
 }
 
 message SignInRequest {

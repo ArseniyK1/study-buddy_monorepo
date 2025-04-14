@@ -9,7 +9,7 @@ import {
 import { Type } from 'class-transformer';
 import { SignUpRequest, User } from 'shared/generated/auth';
 
-class UserDto implements Omit<User, 'id' | 'roleId'> {
+class UserNameDto implements Omit<User, 'id' | 'roleId' | 'email'> {
   @IsString({ message: 'Поле firstName должно быть типа STRING' })
   @IsNotEmpty({ message: 'Поле firstName не должно быть пустым' })
   firstName: string;
@@ -34,9 +34,9 @@ export class SignUpDto implements SignUpRequest {
   password: string;
 
   @ValidateNested()
-  @Type(() => UserDto)
+  @Type(() => UserNameDto)
   @IsNotEmpty({ message: 'Поле name не должно быть пустым' })
-  name: UserDto;
+  name: UserNameDto;
 
   @IsNumber({}, { message: 'Поле roleId должно быть типа NUMBER' })
   @IsOptional()

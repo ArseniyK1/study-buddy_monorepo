@@ -17,6 +17,7 @@ interface AuthServiceClient {
   FindAllUsers(dto: FindAllUsersRequest): Observable<UserListResponse>;
   SignIn(dto: SignInDto): Observable<AuthResponse>;
   SignUp(dto: SignUpDto): Observable<AuthResponse>;
+  GetProfile(id: number): any;
 }
 
 @Injectable()
@@ -42,5 +43,11 @@ export class AuthService implements OnModuleInit {
   @CacheResponse(600)
   async findAllUsers(dto: FindAllUsersRequest): Promise<UserListResponse> {
     return await handleRequest(() => this.authService.FindAllUsers(dto));
+  }
+
+  async getProfile(id: number) {
+    console.log(id);
+
+    return await handleRequest(() => this.authService.GetProfile(id));
   }
 }

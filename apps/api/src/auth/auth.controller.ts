@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Post, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sing-in.dto';
 import {
@@ -28,5 +28,10 @@ export class AuthController {
   @Post('/all-users')
   findAllUsers(@Body() dto: FindAllUsersRequest): Promise<UserListResponse> {
     return this.authService.findAllUsers(dto);
+  }
+
+  @Post('profile')
+  getProfile(@Request() req: any) {
+    return this.authService.getProfile(req.user.userId);
   }
 }

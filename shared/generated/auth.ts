@@ -9,6 +9,7 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { type handleUnaryCall, Metadata, type UntypedServiceImplementation } from "@grpc/grpc-js";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { UInt32Value } from "./google/protobuf/wrappers";
 
 export const protobufPackage = "auth";
 
@@ -506,6 +507,8 @@ export interface AuthServiceClient {
   signUp(request: SignUpRequest, metadata: Metadata, ...rest: any): Observable<AuthResponse>;
 
   findAllUsers(request: FindAllUsersRequest, metadata: Metadata, ...rest: any): Observable<UserListResponse>;
+
+  getProfile(request: UInt32Value, metadata: Metadata, ...rest: any): Observable<User>;
 }
 
 /** Сервис аутентификации и управления пользователями */
@@ -528,11 +531,13 @@ export interface AuthServiceController {
     metadata: Metadata,
     ...rest: any
   ): Promise<UserListResponse> | Observable<UserListResponse> | UserListResponse;
+
+  getProfile(request: UInt32Value, metadata: Metadata, ...rest: any): Promise<User> | Observable<User> | User;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["signIn", "signUp", "findAllUsers"];
+    const grpcMethods: string[] = ["signIn", "signUp", "findAllUsers", "getProfile"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
@@ -577,12 +582,22 @@ export const AuthServiceService = {
     responseSerialize: (value: UserListResponse) => Buffer.from(UserListResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => UserListResponse.decode(value),
   },
+  getProfile: {
+    path: "/auth.AuthService/GetProfile",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: number | undefined) => Buffer.from(UInt32Value.encode({ value: value ?? 0 }).finish()),
+    requestDeserialize: (value: Buffer) => UInt32Value.decode(value).value,
+    responseSerialize: (value: User) => Buffer.from(User.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => User.decode(value),
+  },
 } as const;
 
 export interface AuthServiceServer extends UntypedServiceImplementation {
   signIn: handleUnaryCall<SignInRequest, AuthResponse>;
   signUp: handleUnaryCall<SignUpRequest, AuthResponse>;
   findAllUsers: handleUnaryCall<FindAllUsersRequest, UserListResponse>;
+  getProfile: handleUnaryCall<number | undefined, User>;
 }
 
 export interface MessageFns<T> {
