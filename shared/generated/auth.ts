@@ -43,6 +43,7 @@ export interface User {
   firstName: string;
   lastName: string;
   middleName?: string | undefined;
+  email: string;
   roleId: number;
 }
 
@@ -310,7 +311,7 @@ export const UserListResponse: MessageFns<UserListResponse> = {
 };
 
 function createBaseUser(): User {
-  return { id: 0, firstName: "", lastName: "", roleId: 0 };
+  return { id: 0, firstName: "", lastName: "", email: "", roleId: 0 };
 }
 
 export const User: MessageFns<User> = {
@@ -327,8 +328,11 @@ export const User: MessageFns<User> = {
     if (message.middleName !== undefined) {
       writer.uint32(34).string(message.middleName);
     }
+    if (message.email !== "") {
+      writer.uint32(42).string(message.email);
+    }
     if (message.roleId !== 0) {
-      writer.uint32(40).uint32(message.roleId);
+      writer.uint32(48).uint32(message.roleId);
     }
     return writer;
   },
@@ -373,7 +377,15 @@ export const User: MessageFns<User> = {
           continue;
         }
         case 5: {
-          if (tag !== 40) {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
             break;
           }
 

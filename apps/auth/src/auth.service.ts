@@ -1,11 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, genSalt, hash } from 'bcrypt';
 import { PrismaService } from './prisma.service';
@@ -18,6 +11,7 @@ import {
 } from 'shared/generated/auth';
 import { RpcException } from '@nestjs/microservices';
 import { Status } from '@grpc/grpc-js/build/src/constants';
+import { getAllUsers } from '@prisma/client/sql';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +24,7 @@ export class AuthService {
     const user = await this.findOne(dto.email);
     if (!user) {
       throw new RpcException({
-        code: Status.UNAUTHENTICATED,
+        code: Status.NOT_FOUND,
         message: 'Пользователь не найден!',
       });
     }
@@ -57,7 +51,7 @@ export class AuthService {
     };
   }
 
-  async findOne(email: string, errorMessage?: string) {
+  async findOne(email: string) {
     const user = await this.prisma.auth_user.findUnique({
       where: { email },
     });
@@ -105,32 +99,14 @@ export class AuthService {
   }
 
   async findAllUsers(dto: FindAllUsersRequest): Promise<UserListResponse> {
-    const users = await this.prisma.auth_user.findMany({
-      where: {
-        OR: [
-          {
-            first_name: {
-              contains: dto.nameFilter,
-              mode: 'insensitive',
-            },
-          },
-          {
-            second_name: {
-              contains: dto.nameFilter,
-            },
-          },
-          {
-            middle_name: {
-              contains: dto.nameFilter,
-            },
-          },
-        ],
-      },
-    });
+    const users = await this.prisma.$queryRawTyped(
+      getAllUsers(dto.nameFilter || '', 0, 100),
+    );
 
     return {
       users: users.map((user) => ({
         id: user.id,
+        email: user.email,
         firstName: user.first_name || '',
         lastName: user.second_name || '',
         middleName: user.middle_name || undefined,
