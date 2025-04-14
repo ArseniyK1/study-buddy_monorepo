@@ -47,17 +47,17 @@ npm install
 npm run build
 ```
 
-3. **Настройка базы данных (Prisma)**  
-```bash
-npx prisma generate
-npm run prisma:push
-```
-
-4. **Настройка окружения**  
+3. **Настройка окружения**  
 ```bash
 cp .env-example .env
 ```
 Отредактируйте `.env` под свои настройки.  
+
+4. **Настройка базы данных (Prisma)**  
+```bash
+npx prisma generate
+npm run prisma:push
+```
 
 5. **Запуск в режиме разработки**  
 ```bash
