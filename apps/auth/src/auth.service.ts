@@ -59,9 +59,9 @@ export class AuthService {
     return !!user?.id ? user : null;
   }
 
-  async getProfile(req: any) {
+  async getProfile(id: number) {
     const user = await this.prisma.auth_user.findUnique({
-      where: { id: req.user.userId },
+      where: { id },
     });
     return user;
   }
