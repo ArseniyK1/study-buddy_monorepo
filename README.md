@@ -28,7 +28,7 @@
 
 ### 🔧 Предварительные требования  
 - Node.js (v18+)  
-- Docker (для Redis, Kafka, PostgreSQL)  
+- Docker (для Redis, Kafka, PostgreSQL) - optional, TODO
 - Установленные глобальные пакеты:  
 
 ```bash
