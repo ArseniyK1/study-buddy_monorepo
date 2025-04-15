@@ -33,7 +33,7 @@ message GetProfileRequest {
 
 message UserName {
   string first_name = 1;
-  string last_name = 2;
+  string second_name = 2;
   string middle_name = 3;
 }
 

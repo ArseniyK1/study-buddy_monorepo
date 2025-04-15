@@ -34,7 +34,7 @@ export interface GetProfileRequest {
 
 export interface UserName {
   first_name: string;
-  last_name: string;
+  second_name: string;
   middle_name: string;
 }
 
@@ -257,7 +257,7 @@ export const GetProfileRequest: MessageFns<GetProfileRequest> = {
 };
 
 function createBaseUserName(): UserName {
-  return { first_name: "", last_name: "", middle_name: "" };
+  return { first_name: "", second_name: "", middle_name: "" };
 }
 
 export const UserName: MessageFns<UserName> = {
@@ -265,8 +265,8 @@ export const UserName: MessageFns<UserName> = {
     if (message.first_name !== "") {
       writer.uint32(10).string(message.first_name);
     }
-    if (message.last_name !== "") {
-      writer.uint32(18).string(message.last_name);
+    if (message.second_name !== "") {
+      writer.uint32(18).string(message.second_name);
     }
     if (message.middle_name !== "") {
       writer.uint32(26).string(message.middle_name);
@@ -294,7 +294,7 @@ export const UserName: MessageFns<UserName> = {
             break;
           }
 
-          message.last_name = reader.string();
+          message.second_name = reader.string();
           continue;
         }
         case 3: {

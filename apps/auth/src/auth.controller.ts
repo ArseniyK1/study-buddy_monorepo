@@ -6,6 +6,7 @@ import {
   AuthResponse,
   AuthServiceController,
   FindAllUsersRequest,
+  GetProfileRequest,
   SignInRequest,
   SignUpRequest,
   User,
@@ -27,13 +28,15 @@ export class AuthController implements AuthServiceController {
     return await this.authService.signUp(data);
   }
 
+  // TODO: add types, remove any
   @GrpcMethod('AuthService', 'FindAllUsers')
   async findAllUsers(data: FindAllUsersRequest): Promise<any> {
     return await this.authService.findAllUsers(data);
   }
 
+  // TODO: add types, remove any
   @GrpcMethod('AuthService', 'GetProfile')
-  async getProfile(id: number): Promise<User> {
-    return await this.authService.getProfile(id);
+  async getProfile(data: GetProfileRequest): Promise<any> {
+    return await this.authService.getProfile(data);
   }
 }

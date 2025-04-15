@@ -11,6 +11,7 @@
     "start": "nest start",
     "start:dev": "concurrently --prefix-colors \"bgBlue.bold,bgGreen.bold\" --prefix \"[{name}]\" --names \"API,AUTH\" \"cross-env NODE_ENV=development nest start api --watch\" \"nest start auth --watch\"",
     "start:debug": "nest start --debug --watch",
+    "seed": "ts-node seeder/user_roles.ts",
     "prisma:push": "dotenv -e .env.development -- npx prisma db push",
     "prisma:migrate": "dotenv -e .env.development -- npx prisma migrate dev --name init",
     "install:global-pckg": "npm i -g cross-env @nestjs/cli dotenv-cli concurrently ts-node",

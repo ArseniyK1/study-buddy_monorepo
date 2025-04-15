@@ -5,6 +5,7 @@ import { PrismaService } from './prisma.service';
 import {
   AuthResponse,
   FindAllUsersRequest,
+  GetProfileRequest,
   SignInRequest,
   SignUpRequest,
   User,
@@ -60,9 +61,9 @@ export class AuthService {
     return !!user?.id ? user : null;
   }
 
-  async getProfile(id: number): Promise<User | null> {
+  async getProfile(data: GetProfileRequest): Promise<User | null> {
     const user = await this.prisma.auth_user.findUnique({
-      where: { id },
+      where: { id: data.user_id },
     });
     return !!user?.id ? { ...user, middle_name: user.middle_name ?? '' } : null;
   }
@@ -81,9 +82,9 @@ export class AuthService {
       data: {
         email: dto.email,
         password: hashPassword,
-        first_name: dto.name?.first_name,
-        second_name: dto.name?.last_name,
-        middle_name: dto.name?.middle_name ?? '',
+        first_name: dto.name?.first_name || '',
+        second_name: dto.name?.second_name || '',
+        middle_name: dto.name?.middle_name || '',
         role_id: 1,
       },
     });
