@@ -5,8 +5,10 @@ import { PrismaService } from './prisma.service';
 import {
   AuthResponse,
   FindAllUsersRequest,
+  GetProfileRequest,
   SignInRequest,
   SignUpRequest,
+  User,
   UserListResponse,
 } from 'shared/generated/auth';
 import { RpcException } from '@nestjs/microservices';
@@ -47,7 +49,7 @@ export class AuthService {
       role: role?.value,
     };
     return {
-      accessToken: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(payload),
     };
   }
 
@@ -59,11 +61,11 @@ export class AuthService {
     return !!user?.id ? user : null;
   }
 
-  async getProfile(id: number) {
+  async getProfile(data: GetProfileRequest): Promise<User | null> {
     const user = await this.prisma.auth_user.findUnique({
-      where: { id },
+      where: { id: data.user_id },
     });
-    return user;
+    return !!user?.id ? { ...user, middle_name: user.middle_name ?? '' } : null;
   }
 
   async signUp(dto: SignUpRequest): Promise<AuthResponse> {
@@ -80,9 +82,9 @@ export class AuthService {
       data: {
         email: dto.email,
         password: hashPassword,
-        first_name: dto.name?.firstName,
-        second_name: dto.name?.lastName,
-        middle_name: dto.name?.middleName,
+        first_name: dto.name?.first_name || '',
+        second_name: dto.name?.second_name || '',
+        middle_name: dto.name?.middle_name || '',
         role_id: 1,
       },
     });
@@ -94,24 +96,15 @@ export class AuthService {
     };
 
     return {
-      accessToken: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(payload),
     };
   }
 
-  async findAllUsers(dto: FindAllUsersRequest): Promise<UserListResponse> {
-    const users = await this.prisma.$queryRawTyped(
-      getAllUsers(dto.nameFilter || '', 0, 100),
+  async findAllUsers(dto: FindAllUsersRequest) {
+    const users: getAllUsers.Result[] = await this.prisma.$queryRawTyped(
+      getAllUsers(dto.name_filter || '', 0, 100),
     );
 
-    return {
-      users: users.map((user) => ({
-        id: user.id,
-        email: user.email,
-        firstName: user.first_name || '',
-        lastName: user.second_name || '',
-        middleName: user.middle_name || undefined,
-        roleId: user.role_id,
-      })),
-    };
+    return users;
   }
 }

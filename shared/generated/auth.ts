@@ -9,7 +9,6 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { type handleUnaryCall, Metadata, type UntypedServiceImplementation } from "@grpc/grpc-js";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
-import { UInt32Value } from "./google/protobuf/wrappers";
 
 export const protobufPackage = "auth";
 
@@ -22,17 +21,25 @@ export interface SignUpRequest {
   email: string;
   password: string;
   name: UserName | undefined;
-  roleId?: number | undefined;
+  role_id?: number | undefined;
+}
+
+export interface FindAllUsersRequest {
+  name_filter?: string | undefined;
+}
+
+export interface GetProfileRequest {
+  user_id: number;
 }
 
 export interface UserName {
-  firstName: string;
-  lastName: string;
-  middleName?: string | undefined;
+  first_name: string;
+  second_name: string;
+  middle_name: string;
 }
 
 export interface AuthResponse {
-  accessToken: string;
+  access_token: string;
 }
 
 export interface UserListResponse {
@@ -41,21 +48,18 @@ export interface UserListResponse {
 
 export interface User {
   id: number;
-  firstName: string;
-  lastName: string;
-  middleName?: string | undefined;
+  first_name: string;
+  second_name: string;
+  middle_name: string;
+  password: string;
   email: string;
-  roleId: number;
+  role_id: number;
 }
 
 export interface Error {
   message: string;
   code: number;
-  stackTrace?: string | undefined;
-}
-
-export interface FindAllUsersRequest {
-  nameFilter?: string | undefined;
+  stack_trace?: string | undefined;
 }
 
 export const AUTH_PACKAGE_NAME = "auth";
@@ -123,8 +127,8 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
     if (message.name !== undefined) {
       UserName.encode(message.name, writer.uint32(26).fork()).join();
     }
-    if (message.roleId !== undefined) {
-      writer.uint32(32).uint32(message.roleId);
+    if (message.role_id !== undefined) {
+      writer.uint32(32).uint32(message.role_id);
     }
     return writer;
   },
@@ -165,7 +169,81 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
             break;
           }
 
-          message.roleId = reader.uint32();
+          message.role_id = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+function createBaseFindAllUsersRequest(): FindAllUsersRequest {
+  return {};
+}
+
+export const FindAllUsersRequest: MessageFns<FindAllUsersRequest> = {
+  encode(message: FindAllUsersRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.name_filter !== undefined) {
+      writer.uint32(10).string(message.name_filter);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): FindAllUsersRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseFindAllUsersRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.name_filter = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+function createBaseGetProfileRequest(): GetProfileRequest {
+  return { user_id: 0 };
+}
+
+export const GetProfileRequest: MessageFns<GetProfileRequest> = {
+  encode(message: GetProfileRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.user_id !== 0) {
+      writer.uint32(8).uint32(message.user_id);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetProfileRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetProfileRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.user_id = reader.uint32();
           continue;
         }
       }
@@ -179,19 +257,19 @@ export const SignUpRequest: MessageFns<SignUpRequest> = {
 };
 
 function createBaseUserName(): UserName {
-  return { firstName: "", lastName: "" };
+  return { first_name: "", second_name: "", middle_name: "" };
 }
 
 export const UserName: MessageFns<UserName> = {
   encode(message: UserName, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.firstName !== "") {
-      writer.uint32(10).string(message.firstName);
+    if (message.first_name !== "") {
+      writer.uint32(10).string(message.first_name);
     }
-    if (message.lastName !== "") {
-      writer.uint32(18).string(message.lastName);
+    if (message.second_name !== "") {
+      writer.uint32(18).string(message.second_name);
     }
-    if (message.middleName !== undefined) {
-      writer.uint32(26).string(message.middleName);
+    if (message.middle_name !== "") {
+      writer.uint32(26).string(message.middle_name);
     }
     return writer;
   },
@@ -208,7 +286,7 @@ export const UserName: MessageFns<UserName> = {
             break;
           }
 
-          message.firstName = reader.string();
+          message.first_name = reader.string();
           continue;
         }
         case 2: {
@@ -216,7 +294,7 @@ export const UserName: MessageFns<UserName> = {
             break;
           }
 
-          message.lastName = reader.string();
+          message.second_name = reader.string();
           continue;
         }
         case 3: {
@@ -224,7 +302,7 @@ export const UserName: MessageFns<UserName> = {
             break;
           }
 
-          message.middleName = reader.string();
+          message.middle_name = reader.string();
           continue;
         }
       }
@@ -238,13 +316,13 @@ export const UserName: MessageFns<UserName> = {
 };
 
 function createBaseAuthResponse(): AuthResponse {
-  return { accessToken: "" };
+  return { access_token: "" };
 }
 
 export const AuthResponse: MessageFns<AuthResponse> = {
   encode(message: AuthResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.accessToken !== "") {
-      writer.uint32(10).string(message.accessToken);
+    if (message.access_token !== "") {
+      writer.uint32(10).string(message.access_token);
     }
     return writer;
   },
@@ -261,7 +339,7 @@ export const AuthResponse: MessageFns<AuthResponse> = {
             break;
           }
 
-          message.accessToken = reader.string();
+          message.access_token = reader.string();
           continue;
         }
       }
@@ -312,7 +390,7 @@ export const UserListResponse: MessageFns<UserListResponse> = {
 };
 
 function createBaseUser(): User {
-  return { id: 0, firstName: "", lastName: "", email: "", roleId: 0 };
+  return { id: 0, first_name: "", second_name: "", middle_name: "", password: "", email: "", role_id: 0 };
 }
 
 export const User: MessageFns<User> = {
@@ -320,20 +398,23 @@ export const User: MessageFns<User> = {
     if (message.id !== 0) {
       writer.uint32(8).uint32(message.id);
     }
-    if (message.firstName !== "") {
-      writer.uint32(18).string(message.firstName);
+    if (message.first_name !== "") {
+      writer.uint32(18).string(message.first_name);
     }
-    if (message.lastName !== "") {
-      writer.uint32(26).string(message.lastName);
+    if (message.second_name !== "") {
+      writer.uint32(26).string(message.second_name);
     }
-    if (message.middleName !== undefined) {
-      writer.uint32(34).string(message.middleName);
+    if (message.middle_name !== "") {
+      writer.uint32(34).string(message.middle_name);
+    }
+    if (message.password !== "") {
+      writer.uint32(42).string(message.password);
     }
     if (message.email !== "") {
-      writer.uint32(42).string(message.email);
+      writer.uint32(50).string(message.email);
     }
-    if (message.roleId !== 0) {
-      writer.uint32(48).uint32(message.roleId);
+    if (message.role_id !== 0) {
+      writer.uint32(56).uint32(message.role_id);
     }
     return writer;
   },
@@ -358,7 +439,7 @@ export const User: MessageFns<User> = {
             break;
           }
 
-          message.firstName = reader.string();
+          message.first_name = reader.string();
           continue;
         }
         case 3: {
@@ -366,7 +447,7 @@ export const User: MessageFns<User> = {
             break;
           }
 
-          message.lastName = reader.string();
+          message.second_name = reader.string();
           continue;
         }
         case 4: {
@@ -374,7 +455,7 @@ export const User: MessageFns<User> = {
             break;
           }
 
-          message.middleName = reader.string();
+          message.middle_name = reader.string();
           continue;
         }
         case 5: {
@@ -382,15 +463,23 @@ export const User: MessageFns<User> = {
             break;
           }
 
-          message.email = reader.string();
+          message.password = reader.string();
           continue;
         }
         case 6: {
-          if (tag !== 48) {
+          if (tag !== 50) {
             break;
           }
 
-          message.roleId = reader.uint32();
+          message.email = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.role_id = reader.uint32();
           continue;
         }
       }
@@ -415,8 +504,8 @@ export const Error: MessageFns<Error> = {
     if (message.code !== 0) {
       writer.uint32(16).uint32(message.code);
     }
-    if (message.stackTrace !== undefined) {
-      writer.uint32(26).string(message.stackTrace);
+    if (message.stack_trace !== undefined) {
+      writer.uint32(26).string(message.stack_trace);
     }
     return writer;
   },
@@ -449,44 +538,7 @@ export const Error: MessageFns<Error> = {
             break;
           }
 
-          message.stackTrace = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-};
-
-function createBaseFindAllUsersRequest(): FindAllUsersRequest {
-  return {};
-}
-
-export const FindAllUsersRequest: MessageFns<FindAllUsersRequest> = {
-  encode(message: FindAllUsersRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.nameFilter !== undefined) {
-      writer.uint32(10).string(message.nameFilter);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): FindAllUsersRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseFindAllUsersRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.nameFilter = reader.string();
+          message.stack_trace = reader.string();
           continue;
         }
       }
@@ -508,7 +560,7 @@ export interface AuthServiceClient {
 
   findAllUsers(request: FindAllUsersRequest, metadata: Metadata, ...rest: any): Observable<UserListResponse>;
 
-  getProfile(request: UInt32Value, metadata: Metadata, ...rest: any): Observable<User>;
+  getProfile(request: GetProfileRequest, metadata: Metadata, ...rest: any): Observable<User>;
 }
 
 /** Сервис аутентификации и управления пользователями */
@@ -532,7 +584,7 @@ export interface AuthServiceController {
     ...rest: any
   ): Promise<UserListResponse> | Observable<UserListResponse> | UserListResponse;
 
-  getProfile(request: UInt32Value, metadata: Metadata, ...rest: any): Promise<User> | Observable<User> | User;
+  getProfile(request: GetProfileRequest, metadata: Metadata, ...rest: any): Promise<User> | Observable<User> | User;
 }
 
 export function AuthServiceControllerMethods() {
@@ -586,8 +638,8 @@ export const AuthServiceService = {
     path: "/auth.AuthService/GetProfile",
     requestStream: false,
     responseStream: false,
-    requestSerialize: (value: number | undefined) => Buffer.from(UInt32Value.encode({ value: value ?? 0 }).finish()),
-    requestDeserialize: (value: Buffer) => UInt32Value.decode(value).value,
+    requestSerialize: (value: GetProfileRequest) => Buffer.from(GetProfileRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => GetProfileRequest.decode(value),
     responseSerialize: (value: User) => Buffer.from(User.encode(value).finish()),
     responseDeserialize: (value: Buffer) => User.decode(value),
   },
@@ -597,7 +649,7 @@ export interface AuthServiceServer extends UntypedServiceImplementation {
   signIn: handleUnaryCall<SignInRequest, AuthResponse>;
   signUp: handleUnaryCall<SignUpRequest, AuthResponse>;
   findAllUsers: handleUnaryCall<FindAllUsersRequest, UserListResponse>;
-  getProfile: handleUnaryCall<number | undefined, User>;
+  getProfile: handleUnaryCall<GetProfileRequest, User>;
 }
 
 export interface MessageFns<T> {

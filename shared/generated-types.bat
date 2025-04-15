@@ -26,7 +26,7 @@ for %%F in ("%PROTO_DIR%\*.proto") do (
     protoc ^
       --plugin=protoc-gen-ts_proto="%PLUGIN_PATH%" ^
       --ts_proto_out="%OUTPUT_DIR%" ^
-      --ts_proto_opt=outputServices=grpc-js,nestJs=true,addGrpcMetadata=true,addNestjsRestParameter=true,returnObservable=false ^
+      --ts_proto_opt=outputServices=grpc-js,nestJs=true,addGrpcMetadata=true,addNestjsRestParameter=true,returnObservable=false,snakeToCamel=false ^
       -I="%PROTO_DIR%" ^
       "%%F"
 )
