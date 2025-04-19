@@ -80,8 +80,8 @@ export class AuthService {
       data: {
         email: dto.email,
         password: hashPassword,
-        first_name: dto.name?.firstName,
-        second_name: dto.name?.lastName,
+        first_name: dto.name?.firstName || '',
+        second_name: dto.name?.lastName || '',
         middle_name: dto.name?.middleName,
         role_id: 1,
       },
